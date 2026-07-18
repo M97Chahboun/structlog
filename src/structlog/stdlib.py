@@ -285,13 +285,17 @@ class BoundLogger(BoundLoggerBase):
 
         try:
             args, kw = self._process_event(method_name, event, event_kw)
-            
+
             # If a processor already rendered the exception, suppress stdlib's automatic rendering.
-            is_rendered = kw.pop("_structlog_exception_already_rendered", False) or kw.get("extra", {}).pop("_structlog_exception_already_rendered", False)
-            
+            is_rendered = kw.pop(
+                "_structlog_exception_already_rendered", False
+            ) or kw.get("extra", {}).pop(
+                "_structlog_exception_already_rendered", False
+            )
+
             if method_name == "exception" and is_rendered:
                 kw["exc_info"] = False
-                
+
             return getattr(self._logger, method_name)(*args, **kw)
         except DropEvent:
             return None
